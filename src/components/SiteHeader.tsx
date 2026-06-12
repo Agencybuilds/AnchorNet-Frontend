@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ConnectButton } from "./ConnectButton";
 
 /** Top navigation shared across pages. */
 export function SiteHeader() {
@@ -8,7 +9,7 @@ export function SiteHeader() {
         <Link href="/" className="text-sm font-semibold text-white">
           AnchorNet
         </Link>
-        <div className="flex gap-4 text-sm text-zinc-400">
+        <div className="flex items-center gap-4 text-sm text-zinc-400">
           <Link href="/" className="hover:text-zinc-100">
             Home
           </Link>
@@ -21,6 +22,7 @@ export function SiteHeader() {
           <Link href="/settlements" className="hover:text-zinc-100">
             Settlements
           </Link>
+          <ConnectButton />
         </div>
       </nav>
     </header>
