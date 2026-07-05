@@ -34,11 +34,14 @@ afterEach(() => {
 
 describe("settlementsApi", () => {
   it("fetches settlements and forwards the anchor filter", async () => {
-    const fn = mockFetch(200, { settlements: [settlement()] });
+    const fn = mockFetch(200, {
+      settlements: [settlement()],
+      pagination: { page: 1, pageSize: 20, total: 1, totalPages: 1 },
+    });
     vi.stubGlobal("fetch", fn);
 
-    const settlements = await fetchSettlements("a");
-    expect(settlements).toHaveLength(1);
+    const result = await fetchSettlements({ anchor: "a" });
+    expect(result.settlements).toHaveLength(1);
     expect(fn.mock.calls[0][0]).toContain("anchor=a");
   });
 

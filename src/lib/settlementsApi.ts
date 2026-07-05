@@ -3,19 +3,32 @@
  */
 
 import { apiRequest } from "./api";
-import { Settlement } from "./types";
+import { Settlement, SettlementsPage } from "./types";
 
-/** Fetches settlements, optionally filtered by anchor. */
+/** Options for {@link fetchSettlements}. */
+export interface FetchSettlementsOptions {
+  /** Restrict results to a single anchor. */
+  anchor?: string;
+  /** 1-based page number (server defaults to 1). */
+  page?: number;
+  /** Page size (server defaults to 20, caps at 100). */
+  pageSize?: number;
+  signal?: AbortSignal;
+}
+
+/** Fetches a page of settlements, optionally filtered by anchor. */
 export async function fetchSettlements(
-  anchor?: string,
-  signal?: AbortSignal,
-): Promise<Settlement[]> {
-  const query = anchor ? `?anchor=${encodeURIComponent(anchor)}` : "";
-  const body = await apiRequest<{ settlements: Settlement[] }>(
-    `/api/v1/settlements${query}`,
-    { signal },
-  );
-  return body.settlements;
+  options: FetchSettlementsOptions = {},
+): Promise<SettlementsPage> {
+  const { anchor, page, pageSize, signal } = options;
+  const params = new URLSearchParams();
+  if (anchor) params.set("anchor", anchor);
+  if (page) params.set("page", String(page));
+  if (pageSize) params.set("pageSize", String(pageSize));
+  const query = params.toString() ? `?${params.toString()}` : "";
+  return apiRequest<SettlementsPage>(`/api/v1/settlements${query}`, {
+    signal,
+  });
 }
 
 /** Opens a new settlement, reserving liquidity. */

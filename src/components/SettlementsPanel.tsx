@@ -16,7 +16,7 @@ import { SettlementTable } from "./SettlementTable";
 /** Client panel for opening and managing settlements. */
 export function SettlementsPanel() {
   const load = useCallback(
-    (signal: AbortSignal) => fetchSettlements(undefined, signal),
+    (signal: AbortSignal) => fetchSettlements({ signal }),
     [],
   );
   const { state, reload } = useAsync(load);
@@ -59,7 +59,7 @@ export function SettlementsPanel() {
           <p className="text-sm text-red-400">{state.message}</p>
         ) : (
           <SettlementTable
-            settlements={state.data}
+            settlements={state.data.settlements}
             onExecute={(id) => run(() => executeSettlement(id))}
             onCancel={(id) => run(() => cancelSettlement(id))}
           />

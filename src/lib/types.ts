@@ -68,3 +68,17 @@ export interface Metrics {
   settlements: number;
   pendingSettlements: number;
 }
+
+/** Offset-based pagination metadata returned alongside a page of results. */
+export interface Pagination {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+}
+
+/** A single page of settlements plus its pagination metadata. */
+export interface SettlementsPage {
+  settlements: Settlement[];
+  pagination: Pagination;
+}
