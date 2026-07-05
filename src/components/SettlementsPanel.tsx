@@ -9,6 +9,7 @@ import {
 } from "@/lib/settlementsApi";
 import { Settlement, Pagination } from "@/lib/types";
 import { pluralize } from "@/lib/format";
+import { useToast } from "@/hooks/useToast";
 import { Card } from "./Card";
 import { Spinner } from "./Spinner";
 import { SettlementForm } from "./SettlementForm";
@@ -28,8 +29,8 @@ export function SettlementsPanel() {
   const [nonce, setNonce] = useState(0);
   const [loadingMore, setLoadingMore] = useState(false);
   const [moreError, setMoreError] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const { notify } = useToast();
 
   const reload = useCallback(() => {
     setState({ status: "loading" });
@@ -79,13 +80,13 @@ export function SettlementsPanel() {
     }
   }
 
-  async function run(action: () => Promise<unknown>) {
-    setError(null);
+  async function run(action: () => Promise<unknown>, successMessage: string) {
     try {
       await action();
+      notify("success", successMessage);
       reload();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Request failed");
+      notify("error", err instanceof Error ? err.message : "Request failed");
     }
   }
 
@@ -95,7 +96,10 @@ export function SettlementsPanel() {
     amount: number;
   }) {
     setPending(true);
-    await run(() => openSettlement(input));
+    await run(
+      () => openSettlement(input),
+      `Opened a settlement for ${input.amount} ${input.asset}.`,
+    );
     setPending(false);
   }
 
@@ -106,7 +110,6 @@ export function SettlementsPanel() {
           Open settlement
         </h2>
         <SettlementForm onSubmit={open} pending={pending} />
-        {error ? <p className="mt-2 text-sm text-red-400">{error}</p> : null}
       </Card>
       <Card>
         {state.status === "loading" ? (
@@ -117,8 +120,12 @@ export function SettlementsPanel() {
           <>
             <SettlementTable
               settlements={state.settlements}
-              onExecute={(id) => run(() => executeSettlement(id))}
-              onCancel={(id) => run(() => cancelSettlement(id))}
+              onExecute={(id) =>
+                run(() => executeSettlement(id), `Executed settlement #${id}.`)
+              }
+              onCancel={(id) =>
+                run(() => cancelSettlement(id), `Cancelled settlement #${id}.`)
+              }
             />
             {state.pagination.page < state.pagination.totalPages ? (
               <div className="mt-4 flex flex-col items-center gap-2">

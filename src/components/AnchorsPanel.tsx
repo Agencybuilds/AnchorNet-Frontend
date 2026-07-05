@@ -7,6 +7,7 @@ import {
   deregisterAnchor,
 } from "@/lib/anchorsApi";
 import { useAsync } from "@/hooks/useAsync";
+import { useToast } from "@/hooks/useToast";
 import { Card } from "./Card";
 import { Spinner } from "./Spinner";
 import { AnchorForm } from "./AnchorForm";
@@ -16,29 +17,29 @@ import { AnchorTable } from "./AnchorTable";
 export function AnchorsPanel() {
   const load = useCallback((signal: AbortSignal) => fetchAnchors(signal), []);
   const { state, reload } = useAsync(load);
-  const [error, setError] = useState<string | null>(null);
+  const { notify } = useToast();
   const [pending, setPending] = useState(false);
 
   async function register(input: { id: string; name?: string }) {
     setPending(true);
-    setError(null);
     try {
       await registerAnchor(input);
+      notify("success", `Registered anchor "${input.id}".`);
       reload();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Registration failed");
+      notify("error", err instanceof Error ? err.message : "Registration failed");
     } finally {
       setPending(false);
     }
   }
 
   async function deregister(id: string) {
-    setError(null);
     try {
       await deregisterAnchor(id);
+      notify("success", `Deactivated anchor "${id}".`);
       reload();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Deactivation failed");
+      notify("error", err instanceof Error ? err.message : "Deactivation failed");
     }
   }
 
@@ -49,7 +50,6 @@ export function AnchorsPanel() {
           Register anchor
         </h2>
         <AnchorForm onSubmit={register} pending={pending} />
-        {error ? <p className="mt-2 text-sm text-red-400">{error}</p> : null}
       </Card>
       <Card>
         {state.status === "loading" ? (
