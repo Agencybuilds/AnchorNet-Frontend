@@ -2,6 +2,29 @@
 
 All notable changes to the AnchorNet web app are documented here.
 
+## [0.6.0]
+
+### Added
+
+- **Search:** a client-side search box on the dashboard's pools panel
+  (matches asset), alongside the existing anchors/settlements search boxes.
+- **Pagination:** a page-size selector (10/25/50 rows) for the settlements
+  list, replacing the fixed page size.
+- **Visualization:** a hand-rolled inline-SVG `PoolDistributionBar` showing
+  each asset's share of total liquidity, with a colour-keyed legend, shown
+  above the pools table.
+- **Accessibility:** `ConfirmDialog` now autofocuses its (non-destructive)
+  cancel button, closes on Escape, and traps Tab focus between its two
+  buttons.
+- **Route UX:** every list/detail route (`/dashboard`, `/anchors`,
+  `/anchors/[id]`, `/settlements`, `/settlements/[id]`) now has its own
+  `loading.tsx` spinner and `error.tsx` fallback (via a shared `RouteError`
+  component with a "Try again" action), instead of relying solely on
+  in-panel loading/error states.
+- **Tests:** component coverage for the new `ConfirmDialog` keyboard
+  behaviour, `PoolDistributionBar`, `RouteError`, and previously-untested
+  presentational components (`Spinner`, `StatCard`, `EmptyState`).
+
 ## [0.5.0]
 
 ### Added
