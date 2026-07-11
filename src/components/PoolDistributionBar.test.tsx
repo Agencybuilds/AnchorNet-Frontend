@@ -1,0 +1,46 @@
+import { describe, it, expect } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { PoolDistributionBar } from "./PoolDistributionBar";
+import { Pool } from "@/lib/types";
+
+const pools: Pool[] = [
+  { asset: "USDC", total: 300, anchors: 2 },
+  { asset: "XLM", total: 100, anchors: 5 },
+];
+
+describe("PoolDistributionBar", () => {
+  it("renders nothing when there are no pools", () => {
+    const { container } = render(<PoolDistributionBar pools={[]} />);
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("renders nothing when total liquidity is zero", () => {
+    const { container } = render(
+      <PoolDistributionBar
+        pools={[{ asset: "USDC", total: 0, anchors: 0 }]}
+      />,
+    );
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("renders one bar segment per pool, sized by share of total", () => {
+    const { container } = render(<PoolDistributionBar pools={pools} />);
+    const rects = container.querySelectorAll("rect");
+    expect(rects).toHaveLength(2);
+    expect(rects[0]).toHaveAttribute("width", "75");
+    expect(rects[1]).toHaveAttribute("width", "25");
+  });
+
+  it("positions each segment after the cumulative share of prior segments", () => {
+    const { container } = render(<PoolDistributionBar pools={pools} />);
+    const rects = container.querySelectorAll("rect");
+    expect(rects[0]).toHaveAttribute("x", "0");
+    expect(rects[1]).toHaveAttribute("x", "75");
+  });
+
+  it("shows a percentage legend for each asset", () => {
+    render(<PoolDistributionBar pools={pools} />);
+    expect(screen.getByText("USDC · 75.0%")).toBeInTheDocument();
+    expect(screen.getByText("XLM · 25.0%")).toBeInTheDocument();
+  });
+});
