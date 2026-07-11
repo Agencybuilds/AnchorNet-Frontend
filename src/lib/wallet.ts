@@ -10,6 +10,35 @@ export interface WalletAccount {
   address: string;
 }
 
+/** localStorage key the connected account is persisted under. */
+const STORAGE_KEY = "anchornet:wallet";
+
+/** Persists the connected wallet account so it survives a page refresh. */
+export function saveAccount(account: WalletAccount): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(account));
+}
+
+/** Reads a previously persisted wallet account, if any and well-formed. */
+export function loadAccount(): WalletAccount | null {
+  if (typeof window === "undefined") return null;
+  const raw = window.localStorage.getItem(STORAGE_KEY);
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw) as Partial<WalletAccount>;
+    if (typeof parsed.address !== "string") return null;
+    return { address: parsed.address };
+  } catch {
+    return null;
+  }
+}
+
+/** Clears any persisted wallet account. */
+export function clearAccount(): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(STORAGE_KEY);
+}
+
 /** Shortens an address for display, e.g. "GABC…WXYZ". */
 export function truncateAddress(address: string, visible = 4): string {
   if (address.length <= visible * 2 + 1) return address;
