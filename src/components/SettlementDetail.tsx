@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import Link from "next/link";
 import {
   fetchSettlement,
@@ -13,6 +13,7 @@ import { formatAmount } from "@/lib/format";
 import { StatusBadge } from "./StatusBadge";
 import { Card } from "./Card";
 import { Spinner } from "./Spinner";
+import { ConfirmDialog } from "./ConfirmDialog";
 
 /** Full-record view of a single settlement, with execute/cancel actions. */
 export function SettlementDetail({ id }: { id: number }) {
@@ -22,6 +23,7 @@ export function SettlementDetail({ id }: { id: number }) {
   );
   const { state, reload } = useAsync(load);
   const { notify } = useToast();
+  const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
 
   async function run(action: () => Promise<unknown>, successMessage: string) {
     try {
@@ -94,12 +96,7 @@ export function SettlementDetail({ id }: { id: number }) {
                   Execute
                 </button>
                 <button
-                  onClick={() =>
-                    run(
-                      () => cancelSettlement(state.data.id),
-                      `Cancelled settlement #${state.data.id}.`,
-                    )
-                  }
+                  onClick={() => setConfirmCancelOpen(true)}
                   className="rounded-lg bg-zinc-800 px-3 py-1.5 text-sm text-red-400 hover:text-red-300"
                 >
                   Cancel
@@ -109,6 +106,23 @@ export function SettlementDetail({ id }: { id: number }) {
           </div>
         )}
       </Card>
+      {state.status === "ready" ? (
+        <ConfirmDialog
+          open={confirmCancelOpen}
+          title="Cancel settlement"
+          message={`Cancel settlement #${state.data.id}? Reserved liquidity will be released.`}
+          confirmLabel="Cancel settlement"
+          cancelLabel="Keep settlement"
+          onCancel={() => setConfirmCancelOpen(false)}
+          onConfirm={() => {
+            setConfirmCancelOpen(false);
+            run(
+              () => cancelSettlement(state.data.id),
+              `Cancelled settlement #${state.data.id}.`,
+            );
+          }}
+        />
+      ) : null}
     </div>
   );
 }

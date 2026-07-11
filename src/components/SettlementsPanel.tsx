@@ -15,6 +15,7 @@ import { Card } from "./Card";
 import { TableSkeleton } from "./TableSkeleton";
 import { SettlementForm } from "./SettlementForm";
 import { SettlementTable } from "./SettlementTable";
+import { ConfirmDialog } from "./ConfirmDialog";
 
 /** Settlements fetched per page. */
 const PAGE_SIZE = 10;
@@ -32,6 +33,7 @@ export function SettlementsPanel() {
   const [moreError, setMoreError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [query, setQuery] = useState("");
+  const [pendingCancelId, setPendingCancelId] = useState<number | null>(null);
   const { notify } = useToast();
 
   const reload = useCallback(() => {
@@ -148,9 +150,7 @@ export function SettlementsPanel() {
                 onExecute={(id) =>
                   run(() => executeSettlement(id), `Executed settlement #${id}.`)
                 }
-                onCancel={(id) =>
-                  run(() => cancelSettlement(id), `Cancelled settlement #${id}.`)
-                }
+                onCancel={setPendingCancelId}
               />
             )}
             {state.pagination.page < state.pagination.totalPages ? (
@@ -174,6 +174,21 @@ export function SettlementsPanel() {
           </>
         )}
       </Card>
+      <ConfirmDialog
+        open={pendingCancelId !== null}
+        title="Cancel settlement"
+        message={`Cancel settlement #${pendingCancelId}? Reserved liquidity will be released.`}
+        confirmLabel="Cancel settlement"
+        cancelLabel="Keep settlement"
+        onCancel={() => setPendingCancelId(null)}
+        onConfirm={() => {
+          const id = pendingCancelId;
+          setPendingCancelId(null);
+          if (id !== null) {
+            run(() => cancelSettlement(id), `Cancelled settlement #${id}.`);
+          }
+        }}
+      />
     </div>
   );
 }
