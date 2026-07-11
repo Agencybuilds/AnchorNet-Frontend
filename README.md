@@ -45,9 +45,16 @@ cp .env.example .env.local
   routing **quote form** that previews fees, deliverable amount, and route
 - `/anchors` – register, list and deactivate liquidity anchors, with
   **status filter tabs** (All / Active / Inactive) over the fetched list
+- `/anchors/[id]` – full record detail for a single anchor (status,
+  registration date) with its own deactivate action, linked from the anchors
+  table
 - `/settlements` – open settlements and execute / cancel pending ones, with
   a **"Load more" button** that pages through the API's `?page=`/`?pageSize=`
-  results instead of fetching everything up front
+  results instead of fetching everything up front, and **sortable columns**
+  (Anchor / Amount / Status) over the currently loaded rows
+- `/settlements/[id]` – full record detail for a single settlement (anchor,
+  asset, amount, fee, status) with its own execute/cancel actions, linked
+  from the settlements table
 
 Registering an anchor or opening a settlement is validated inline (missing or
 invalid fields are flagged next to the input before the request is sent), and
@@ -62,18 +69,22 @@ wallet integration).
 ### Structure
 
 ```
-src/app/        routes (landing, dashboard, anchors, settlements)
+src/app/        routes (landing, dashboard, anchors + [id], settlements + [id])
 src/components/  UI (Card, tables, forms with inline validation, skeleton
-                 loaders, panels, badges, toasts, wallet, header/footer)
-src/hooks/       useAsync, useInterval, useWallet, useToast
+                 loaders, panels, badges, toasts, wallet, detail views,
+                 header/footer)
+src/hooks/       useAsync, useInterval, useWallet, useToast, useSortableData
 src/lib/         types, formatting, toast stack helpers, API clients
                  (liquidity, anchors, settlements, metrics)
 ```
 
 ## Testing
 
-Unit tests run with [Vitest](https://vitest.dev) over the `src/lib` helpers and
-API clients (`npm test`). Lint and build are separate CI steps.
+Unit tests run with [Vitest](https://vitest.dev) over the `src/lib` helpers,
+API clients and `src/hooks` (`npm test`). Component behaviour (toasts, status
+badges, sortable tables) is covered with
+[React Testing Library](https://testing-library.com/react) under a jsdom
+environment. Lint and build are separate CI steps.
 
 ## Scripts
 
