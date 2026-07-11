@@ -41,17 +41,21 @@ cp .env.example .env.local
 ## Pages
 
 - `/` – landing page with an overview and links to each section
-- `/dashboard` – live metrics bar (auto-refreshing), aggregated pools, and a
-  routing **quote form** that previews fees, deliverable amount, and route
+- `/dashboard` – live metrics bar (auto-refreshing), aggregated pools in a
+  **sortable table** (Asset / Total liquidity / Anchors), and a routing
+  **quote form** that previews fees, deliverable amount, and route
 - `/anchors` – register, list and deactivate liquidity anchors, with
-  **status filter tabs** (All / Active / Inactive) over the fetched list
+  **status filter tabs** (All / Active / Inactive), a **search box** that
+  matches on id/name, and **sortable columns** (Anchor / Registered /
+  Status) over the fetched list
 - `/anchors/[id]` – full record detail for a single anchor (status,
   registration date) with its own deactivate action, linked from the anchors
   table
 - `/settlements` – open settlements and execute / cancel pending ones, with
   a **"Load more" button** that pages through the API's `?page=`/`?pageSize=`
-  results instead of fetching everything up front, and **sortable columns**
-  (Anchor / Amount / Status) over the currently loaded rows
+  results instead of fetching everything up front, a **search box** that
+  matches on id/anchor/asset, and **sortable columns** (Anchor / Amount /
+  Status) over the currently loaded rows
 - `/settlements/[id]` – full record detail for a single settlement (anchor,
   asset, amount, fee, status) with its own execute/cancel actions, linked
   from the settlements table
@@ -60,29 +64,34 @@ Registering an anchor or opening a settlement is validated inline (missing or
 invalid fields are flagged next to the input before the request is sent), and
 every mutating action — register, deactivate, open, execute, cancel — reports
 success or failure via a **toast notification** in the bottom corner of the
-screen. Tables show an animated skeleton while their first page of data is
-loading, instead of a bare "Loading…" line.
+screen. Deactivating an anchor or cancelling a settlement first opens a
+**confirmation dialog**, on both the list panels and their detail pages, so a
+misclick can't silently take a destructive action. Tables show an animated
+skeleton while their first page of data is loading, instead of a bare
+"Loading…" line.
 
 A mock **wallet connect** lives in the header (a stand-in for a real Stellar
-wallet integration).
+wallet integration); the connected account is persisted to `localStorage` so
+it survives a page refresh.
 
 ### Structure
 
 ```
 src/app/        routes (landing, dashboard, anchors + [id], settlements + [id])
 src/components/  UI (Card, tables, forms with inline validation, skeleton
-                 loaders, panels, badges, toasts, wallet, detail views,
-                 header/footer)
+                 loaders, panels, badges, toasts, confirm dialog, wallet,
+                 detail views, header/footer)
 src/hooks/       useAsync, useInterval, useWallet, useToast, useSortableData
-src/lib/         types, formatting, toast stack helpers, API clients
-                 (liquidity, anchors, settlements, metrics)
+src/lib/         types, formatting, search matching, toast stack helpers,
+                 wallet session persistence, API clients (liquidity,
+                 anchors, settlements, metrics)
 ```
 
 ## Testing
 
 Unit tests run with [Vitest](https://vitest.dev) over the `src/lib` helpers,
 API clients and `src/hooks` (`npm test`). Component behaviour (toasts, status
-badges, sortable tables) is covered with
+badges, sortable tables, forms, confirm dialogs) is covered with
 [React Testing Library](https://testing-library.com/react) under a jsdom
 environment. Lint and build are separate CI steps.
 
