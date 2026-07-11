@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Settlement } from "@/lib/types";
 import { formatAmount } from "@/lib/format";
 import { StatusBadge } from "./StatusBadge";
@@ -35,7 +36,11 @@ export function SettlementTable({
       <tbody>
         {settlements.map((s) => (
           <tr key={s.id} className="border-b border-zinc-900">
-            <td className="py-2 text-zinc-500">{s.id}</td>
+            <td className="py-2 text-zinc-500">
+              <Link href={`/settlements/${s.id}`} className="hover:underline">
+                {s.id}
+              </Link>
+            </td>
             <td className="py-2 font-mono text-xs text-zinc-300">{s.anchor}</td>
             <td className="py-2 font-mono text-zinc-100">{s.asset}</td>
             <td className="py-2 text-zinc-200">{formatAmount(s.amount)}</td>
