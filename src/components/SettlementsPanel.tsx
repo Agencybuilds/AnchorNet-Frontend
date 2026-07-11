@@ -17,8 +17,8 @@ import { SettlementForm } from "./SettlementForm";
 import { SettlementTable } from "./SettlementTable";
 import { ConfirmDialog } from "./ConfirmDialog";
 
-/** Settlements fetched per page. */
-const PAGE_SIZE = 10;
+/** Selectable page sizes for the settlements list; the first is the default. */
+const PAGE_SIZE_OPTIONS = [10, 25, 50];
 
 type ListState =
   | { status: "loading" }
@@ -29,6 +29,7 @@ type ListState =
 export function SettlementsPanel() {
   const [state, setState] = useState<ListState>({ status: "loading" });
   const [nonce, setNonce] = useState(0);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE_OPTIONS[0]);
   const [loadingMore, setLoadingMore] = useState(false);
   const [moreError, setMoreError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -43,7 +44,8 @@ export function SettlementsPanel() {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetchSettlements({ page: 1, pageSize: PAGE_SIZE, signal: controller.signal })
+    setState({ status: "loading" });
+    fetchSettlements({ page: 1, pageSize, signal: controller.signal })
       .then(({ settlements, pagination }) =>
         setState({ status: "ready", settlements, pagination }),
       )
@@ -55,7 +57,12 @@ export function SettlementsPanel() {
         });
       });
     return () => controller.abort();
-  }, [nonce]);
+  }, [nonce, pageSize]);
+
+  /** Switches the page size and reloads from page 1. */
+  function changePageSize(size: number) {
+    setPageSize(size);
+  }
 
   async function loadMore() {
     if (state.status !== "ready") return;
@@ -64,7 +71,7 @@ export function SettlementsPanel() {
     try {
       const next = await fetchSettlements({
         page: state.pagination.page + 1,
-        pageSize: PAGE_SIZE,
+        pageSize,
       });
       setState((prev) =>
         prev.status === "ready"
@@ -130,7 +137,22 @@ export function SettlementsPanel() {
         ) : (
           <>
             {state.settlements.length > 0 ? (
-              <div className="mb-3 flex justify-end">
+              <div className="mb-3 flex flex-wrap items-center justify-end gap-2">
+                <label className="flex items-center gap-1.5 text-xs text-zinc-400">
+                  Rows per page
+                  <select
+                    value={pageSize}
+                    onChange={(e) => changePageSize(Number(e.target.value))}
+                    aria-label="Rows per page"
+                    className="rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-xs text-zinc-100 outline-none focus:border-zinc-600"
+                  >
+                    {PAGE_SIZE_OPTIONS.map((size) => (
+                      <option key={size} value={size}>
+                        {size}
+                      </option>
+                    ))}
+                  </select>
+                </label>
                 <input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
