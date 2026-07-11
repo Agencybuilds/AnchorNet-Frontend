@@ -31,6 +31,14 @@ export async function fetchSettlements(
   });
 }
 
+/** Fetches a single settlement by id. */
+export async function fetchSettlement(
+  id: number,
+  signal?: AbortSignal,
+): Promise<Settlement> {
+  return apiRequest<Settlement>(`/api/v1/settlements/${id}`, { signal });
+}
+
 /** Opens a new settlement, reserving liquidity. */
 export async function openSettlement(input: {
   anchor: string;
