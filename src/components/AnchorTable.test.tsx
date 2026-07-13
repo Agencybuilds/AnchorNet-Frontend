@@ -52,6 +52,18 @@ describe("AnchorTable", () => {
     expect(nameCells()).toEqual(["Charliec", "Bravob", "Alphaa"]);
   });
 
+  it("exposes the current sort direction via aria-sort", () => {
+    render(<AnchorTable anchors={anchors} />);
+    const header = screen.getByLabelText("Sort by Anchor").closest("th");
+    expect(header).toHaveAttribute("aria-sort", "none");
+
+    fireEvent.click(screen.getByLabelText("Sort by Anchor"));
+    expect(header).toHaveAttribute("aria-sort", "ascending");
+
+    fireEvent.click(screen.getByLabelText("Sort by Anchor"));
+    expect(header).toHaveAttribute("aria-sort", "descending");
+  });
+
   it("only shows a deactivate button for active anchors when onDeregister is passed", () => {
     render(
       <AnchorTable
