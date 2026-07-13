@@ -2,6 +2,14 @@
 
 All notable changes to the AnchorNet web app are documented here.
 
+## [0.9.0]
+
+### Added
+
+- **Accessibility:** `aria-sort` on every sortable table header
+  (`AnchorTable`, `SettlementTable`, `PoolTable`), reflecting `none`,
+  `ascending`, or `descending`.
+
 ## [0.8.0]
 
 ### Added
