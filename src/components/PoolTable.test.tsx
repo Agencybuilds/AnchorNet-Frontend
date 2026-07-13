@@ -45,4 +45,16 @@ describe("PoolTable", () => {
     fireEvent.click(screen.getByLabelText("Sort by Asset"));
     expect(assetCells()).toEqual(["EURC", "USDC", "XLM"]);
   });
+
+  it("exposes the current sort direction via aria-sort", () => {
+    render(<PoolTable pools={pools} />);
+    const header = screen.getByLabelText("Sort by Asset").closest("th");
+    expect(header).toHaveAttribute("aria-sort", "none");
+
+    fireEvent.click(screen.getByLabelText("Sort by Asset"));
+    expect(header).toHaveAttribute("aria-sort", "ascending");
+
+    fireEvent.click(screen.getByLabelText("Sort by Asset"));
+    expect(header).toHaveAttribute("aria-sort", "descending");
+  });
 });
