@@ -9,6 +9,7 @@ import { formatDate } from "@/lib/format";
 import { Card } from "./Card";
 import { Spinner } from "./Spinner";
 import { ConfirmDialog } from "./ConfirmDialog";
+import { CopyButton } from "./CopyButton";
 
 /** Full-record view of a single anchor, with a deactivate action. */
 export function AnchorDetail({ id }: { id: string }) {
@@ -53,8 +54,9 @@ export function AnchorDetail({ id }: { id: string }) {
               <h2 className="text-lg font-semibold text-white">
                 {state.data.name}
               </h2>
-              <p className="font-mono text-xs text-zinc-500">
+              <p className="flex items-center gap-1 font-mono text-xs text-zinc-500">
                 {state.data.id}
+                <CopyButton text={state.data.id} />
               </p>
             </div>
             <dl className="grid grid-cols-2 gap-4 text-sm">
