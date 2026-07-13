@@ -14,6 +14,7 @@ import {
   executeSettlement,
   cancelSettlement,
 } from "@/lib/settlementsApi";
+import { Settlement, SettlementsPage } from "@/lib/types";
 
 vi.mock("@/lib/settlementsApi", () => ({
   fetchSettlements: vi.fn(),
@@ -26,7 +27,10 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-function page(settlements: unknown[], overrides: Partial<{ page: number; totalPages: number; total: number }> = {}) {
+function page(
+  settlements: Settlement[],
+  overrides: Partial<{ page: number; totalPages: number; total: number }> = {},
+): SettlementsPage {
   return {
     settlements,
     pagination: {
