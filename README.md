@@ -62,6 +62,10 @@ cp .env.example .env.local
 - `/settlements/[id]` – full record detail for a single settlement (anchor,
   asset, amount, fee, status) with its own execute/cancel actions, linked
   from the settlements table
+- any unmatched route – a custom 404 page with a link back home
+
+Both detail pages have a **copy button** next to their address-like fields
+(anchor id, settlement anchor address) for quickly grabbing the value.
 
 Every list/detail route also has its own `loading.tsx` (a spinner shown while
 the route segment loads) and `error.tsx` (a "Try again" fallback, via the
