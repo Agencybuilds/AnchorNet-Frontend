@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Pool } from "@/lib/types";
 import { fetchPools } from "@/lib/api";
 import { formatAmount } from "@/lib/format";
 import { matchesQuery } from "@/lib/search";
+import { useFocusShortcut } from "@/hooks/useFocusShortcut";
 import { Card } from "./Card";
 import { StatCard } from "./StatCard";
 import { PoolTable } from "./PoolTable";
@@ -21,6 +22,8 @@ export function PoolsPanel() {
   const [state, setState] = useState<LoadState>({ status: "loading" });
   const [nonce, setNonce] = useState(0);
   const [query, setQuery] = useState("");
+  const searchRef = useRef<HTMLInputElement>(null);
+  useFocusShortcut("/", searchRef);
 
   const reload = useCallback(() => {
     setState({ status: "loading" });
@@ -96,9 +99,10 @@ export function PoolsPanel() {
           <div className="flex items-center gap-2">
             {state.pools.length > 0 ? (
               <input
+                ref={searchRef}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search pools…"
+                placeholder="Search pools… (/)"
                 aria-label="Search pools"
                 className="w-full max-w-40 rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-xs text-zinc-100 outline-none focus:border-zinc-600"
               />
