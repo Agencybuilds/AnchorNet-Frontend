@@ -2,6 +2,19 @@
 
 All notable changes to the AnchorNet web app are documented here.
 
+## [0.8.0]
+
+### Added
+
+- **Accessibility:** `useFocusShortcut` hook — pressing `/` anywhere on the
+  page focuses the current search box (dashboard pools, anchors,
+  settlements), unless focus is already inside another text field.
+
+### Testing
+
+- Covered the toast stack's 5-second auto-dismiss timer (previously only
+  manual dismiss was tested).
+
 ## [0.7.0]
 
 ### Added
