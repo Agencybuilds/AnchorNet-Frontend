@@ -14,6 +14,7 @@ import { StatusBadge } from "./StatusBadge";
 import { Card } from "./Card";
 import { Spinner } from "./Spinner";
 import { ConfirmDialog } from "./ConfirmDialog";
+import { CopyButton } from "./CopyButton";
 
 /** Full-record view of a single settlement, with execute/cancel actions. */
 export function SettlementDetail({ id }: { id: number }) {
@@ -59,8 +60,9 @@ export function SettlementDetail({ id }: { id: number }) {
             <dl className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <dt className="text-zinc-400">Anchor</dt>
-                <dd className="mt-1 font-mono text-zinc-100">
+                <dd className="mt-1 flex items-center gap-1 font-mono text-zinc-100">
                   {state.data.anchor}
+                  <CopyButton text={state.data.anchor} />
                 </dd>
               </div>
               <div>
