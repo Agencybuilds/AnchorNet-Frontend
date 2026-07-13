@@ -32,6 +32,19 @@ describe("PoolsPanel", () => {
     expect(screen.getByText("1,500")).toBeInTheDocument(); // total liquidity
   });
 
+  it("focuses the search box when / is pressed", async () => {
+    vi.mocked(fetchPools).mockResolvedValue([
+      { asset: "USDC", total: 1000, anchors: 2 },
+    ]);
+
+    render(<PoolsPanel />);
+    await screen.findByText("USDC");
+
+    fireEvent.keyDown(document.body, { key: "/" });
+
+    expect(document.activeElement).toBe(screen.getByLabelText("Search pools"));
+  });
+
   it("filters pools via the search box", async () => {
     vi.mocked(fetchPools).mockResolvedValue([
       { asset: "USDC", total: 1000, anchors: 2 },
