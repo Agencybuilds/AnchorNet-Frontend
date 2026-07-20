@@ -6,6 +6,7 @@ export default defineConfig({
     environment: "jsdom",
     include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
     setupFiles: ["./vitest.setup.ts"],
+    css: false,
     coverage: {
       provider: "v8",
       // This issue's contract is that ToastProvider's pause/resume timing is
