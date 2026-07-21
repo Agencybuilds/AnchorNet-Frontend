@@ -252,6 +252,27 @@ describe("AnchorsPanel", () => {
     ).toBeInTheDocument();
   });
 
+  it("surfaces a field-level error on failed registration and does not clear the form", async () => {
+    vi.mocked(fetchAnchors).mockResolvedValue([]);
+    vi.mocked(registerAnchor).mockRejectedValue(new Error("Duplicate anchor id"));
+
+    renderPanel();
+    await waitFor(() => expect(fetchAnchors).toHaveBeenCalledTimes(1));
+
+    const idInput = screen.getByPlaceholderText("Anchor id (account or domain)");
+    fireEvent.change(idInput, { target: { value: "existing-anchor" } });
+    fireEvent.click(screen.getByRole("button", { name: "Register" }));
+
+    await waitFor(() => {
+      expect(registerAnchor).toHaveBeenCalledWith({
+        id: "existing-anchor",
+        name: undefined,
+      });
+      expect(idInput).toHaveValue("existing-anchor");
+      expect(screen.getByText("Duplicate anchor id")).toBeInTheDocument();
+    });
+  });
+
   it("confirms before deactivating an anchor", async () => {
     vi.mocked(fetchAnchors).mockResolvedValue([
       { id: "a", name: "Anchor A", registeredAt: "", active: true },

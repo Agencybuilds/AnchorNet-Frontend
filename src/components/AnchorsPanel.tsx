@@ -54,6 +54,7 @@ export function AnchorsPanel() {
   const { state, reload } = useAsync(load);
   const { notify } = useToast();
   const [pending, setPending] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
   const [pendingDeregisterId, setPendingDeregisterId] = useState<
     string | null
   >(null);
@@ -104,12 +105,17 @@ export function AnchorsPanel() {
 
   async function register(input: { id: string; name?: string }) {
     setPending(true);
+    setServerError(null);
     try {
       await registerAnchor(input);
       notify("success", `Registered anchor "${input.id}".`);
       reload();
+      return true;
     } catch (err: unknown) {
-      notify("error", err instanceof Error ? err.message : "Registration failed");
+      const message = err instanceof Error ? err.message : "Registration failed";
+      notify("error", message);
+      setServerError(message);
+      return false;
     } finally {
       setPending(false);
     }
@@ -131,7 +137,7 @@ export function AnchorsPanel() {
         <h2 className="mb-3 text-sm font-semibold text-zinc-200">
           Register anchor
         </h2>
-        <AnchorForm onSubmit={register} pending={pending} />
+        <AnchorForm onSubmit={register} pending={pending} serverError={serverError || undefined} />
       </Card>
       <Card>
         {state.status === "loading" ? (
