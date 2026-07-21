@@ -133,6 +133,30 @@ export function SettlementsPanel() {
     }
   }
 
+  async function runSettlementAction(
+    action: () => Promise<Settlement>,
+    successMessage: string,
+  ) {
+    try {
+      const updatedSettlement = await action();
+      setState((previous) =>
+        previous.status === "ready"
+          ? {
+              ...previous,
+              settlements: previous.settlements.map((settlement) =>
+                settlement.id === updatedSettlement.id
+                  ? updatedSettlement
+                  : settlement,
+              ),
+            }
+          : previous,
+      );
+      notify("success", successMessage);
+    } catch (err: unknown) {
+      notify("error", err instanceof Error ? err.message : "Request failed");
+    }
+  }
+
   async function open(input: {
     anchor: string;
     asset: string;
@@ -237,7 +261,10 @@ export function SettlementsPanel() {
               <SettlementTable
                 settlements={visibleSettlements}
                 onExecute={(id) =>
-                  run(() => executeSettlement(id), `Executed settlement #${id}.`)
+                  runSettlementAction(
+                    () => executeSettlement(id),
+                    `Executed settlement #${id}.`,
+                  )
                 }
                 onCancel={setPendingCancelId}
               />
@@ -274,7 +301,10 @@ export function SettlementsPanel() {
           const id = pendingCancelId;
           setPendingCancelId(null);
           if (id !== null) {
-            run(() => cancelSettlement(id), `Cancelled settlement #${id}.`);
+            runSettlementAction(
+              () => cancelSettlement(id),
+              `Cancelled settlement #${id}.`,
+            );
           }
         }}
       />
