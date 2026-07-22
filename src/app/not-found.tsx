@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SiteHeader } from "@/components/SiteHeader";
+import { PageShell } from "@/components/PageShell";
 
 export const metadata: Metadata = {
   title: "Page not found – AnchorNet",
@@ -17,9 +17,7 @@ const secondaryLinks = [
 /** Custom 404 page, shown for any unmatched route. */
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans">
-      <SiteHeader />
-      <main id="main-content" tabIndex={-1} className="mx-auto flex max-w-4xl flex-col items-center px-6 py-24 text-center">
+    <PageShell py="py-24" className="flex flex-col items-center text-center">
         <p className="text-sm font-medium text-zinc-500">404</p>
         <h1 className="mt-2 text-2xl font-bold tracking-tight text-white">
           Page not found
@@ -45,9 +43,6 @@ export default function NotFound() {
             </Link>
           ))}
         </nav>
-
-
-      </main>
-    </div>
+    </PageShell>
   );
 }
