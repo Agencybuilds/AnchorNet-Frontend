@@ -80,7 +80,7 @@ export function SettlementForm({
 
     const result = await onSubmit({
       anchor: anchor.trim(),
-      asset: asset.trim(),
+      asset: asset.trim().toUpperCase(),
       amount: Number(amount),
     });
     if (result === false) return;

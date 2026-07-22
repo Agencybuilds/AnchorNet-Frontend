@@ -67,7 +67,7 @@ export function PoolsPanel() {
         />
         <StatCard
           label="Anchor positions"
-          value={String(positions)}
+          value={formatAmount(positions)}
           hint="across all assets"
         />
       </div>
