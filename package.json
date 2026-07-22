@@ -29,5 +29,8 @@
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^2.1.9"
+  },
+  "optionalDependencies": {
+    "@rolldown/binding-win32-x64-msvc": "^1.2.0"
   }
 }
