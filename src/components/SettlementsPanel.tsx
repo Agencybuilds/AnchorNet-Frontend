@@ -150,16 +150,6 @@ export function SettlementsPanel() {
     }
   }
 
-  async function run(action: () => Promise<unknown>, successMessage: string) {
-    try {
-      await action();
-      notify("success", successMessage);
-      reload();
-    } catch (err: unknown) {
-      notify("error", err instanceof Error ? err.message : "Request failed");
-    }
-  }
-
   async function runSettlementAction(
     action: () => Promise<Settlement>,
     successMessage: string,
