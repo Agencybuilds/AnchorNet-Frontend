@@ -168,7 +168,7 @@ describe("ThemeProvider", () => {
     fireEvent.click(screen.getByRole("button", { name: "toggle" }));
     expect(screen.getByTestId("theme")).toHaveTextContent("dark");
 
-    act(() => emitSystemThemeChange(true));
+    act(() => emitSystemThemeChange(false));
     expect(screen.getByTestId("theme")).toHaveTextContent("dark");
   });
 });
