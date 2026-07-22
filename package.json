@@ -34,6 +34,11 @@
     "typescript": "^5",
     "vitest": "^2.1.9"
   },
+  "allowScripts": {
+    "esbuild@0.21.5": true,
+    "sharp@0.34.5": true,
+    "unrs-resolver@1.12.2": true
+  },
   "optionalDependencies": {
     "@rolldown/binding-win32-x64-msvc": "^1.2.0"
   }
